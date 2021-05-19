@@ -5,11 +5,11 @@ import { Button, Input, Text } from "react-native-elements"
 import { StatusBar } from 'expo-status-bar';
 import { auth } from "../firebase";
 
-const register = () => {
+const register = async () => {
     auth
     .createUserWithEmailAndPassword(email, password)
     .then(authUser =>{
-        authUser.user.update({
+        authUser.user.updateProfile({
             displayName: name,
             photoURL: imageUrl || "https://qph.fs.quoracdn.net/main-qimg-69a663c52040e14f9e8c01ca629c7f0f.png"
         })
@@ -17,11 +17,26 @@ const register = () => {
     .catch(error => alert(error.message));
 };
 
+ const selectImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
 const RegisterScreen = ({ navigation }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [imageUrl, setImageUrl] = useState('');
+    
+    useLayoutEffect(() => {
+    navigation.setOptions({
+      headerBackTitle: "Login",
+    });
+  }, [navigation]);
+    
     return (
         <KeyboardAvoidingView behavior="padding" style={styles.container}>
             <StatusBar style="light" />
@@ -50,18 +65,29 @@ const RegisterScreen = ({ navigation }) => {
 export default RegisterScreen
 
 const styles = StyleSheet.create({
-    container:{
-        flex: 1,
-        alignItems:'center',
-        justifyContent:'center',
-        padding:10,
-        backgroundColor:'white',
-    },
-    buton:{
-        width: 200,
-        marginTop:10,
-    },
-    inputContainer:{
-        width:300,
-    }
-})
+    container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+    backgroundColor: "white",
+  },
+  inputContainer: {
+    width: 300,
+  },
+  button: {
+    width: 200,
+    marginTop: 10,
+  },
+  selectImage: {
+    width: 310,
+    alignSelf: 'center',
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 10,
+    marginBottom: 25,
+    color: "white",
+    backgroundColor: '#FF6C6C',
+    borderColor: "transparent"
+  }
+});
